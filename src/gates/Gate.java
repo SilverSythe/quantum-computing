@@ -3,13 +3,9 @@ package gates;
 import mathStructs.Matrix;
 
 public class Gate {
-    private Matrix gate;
+    protected Matrix gate;
 
-    public Gate(Matrix gateMatrix){
-        gate = gateMatrix;
-    }
-
-    public Matrix getGate(){
+    public Matrix getGateMatrix(){
         return this.gate;
     }
 }

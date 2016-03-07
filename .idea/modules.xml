@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/QuantumComputing.iml" filepath="$PROJECT_DIR$/QuantumComputing.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/QuantumComputing/QuantumComputing.iml" filepath="$USER_HOME$/Documents/QuantumComputing/QuantumComputing.iml" />
     </modules>
   </component>
 </project>

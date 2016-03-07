@@ -8,7 +8,9 @@ import mathStructs.Matrix;
  */
 public interface IQuantumRegister {
 
-    void apply(Gate gate, int index);
+    void apply(Gate gate, int qubitIndex);
+
+    void apply(Gate gate, int qubitIndex1, int qubitIndex2);
 
     int getSize();
 

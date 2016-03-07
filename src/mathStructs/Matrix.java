@@ -57,13 +57,23 @@ public class Matrix {
     }
 
     /**
-     * Sets a specific value of the matrix.
+     * Sets a specific complex valued element of the matrix.
      * @param i the row
      * @param j the column
-     * @param val the value to assign
+     * @param val the complex value to assign
      */
     public void setElement(int i, int j, Complex val){
         values[i*colSize + j] = val;
+    }
+
+    /**
+     * Sets a specific real valued element of the matrix.
+     * @param i the row
+     * @param j the column
+     * @param val the real value to assign
+     */
+    public void setElement(int i, int j, double val){
+        values[i*colSize + j] = new Complex(val, 0.0);
     }
 
     /**
@@ -118,7 +128,8 @@ public class Matrix {
             throw new MatrixException("Not a square matrix, cannot calculate determinant.");
         }
 
-
+        //TODO: implement
+        return 0;
     }
 
     /**
@@ -151,9 +162,9 @@ public class Matrix {
 
         for(int i=0;i<rowSize;i++){
             for(int j=0;j<colSize;j++){
-                str += (this.getElement(i, j).toString() + " ");
+                str += (this.getElement(i, j).toString() + "     ");
             }
-            str += "\n";
+            str += "\n\n";
         }
 
         return str;
@@ -203,6 +214,13 @@ public class Matrix {
         return M;
     }
 
+    /**
+     * Adds two (equally sized) matrices by direct addition of elements.
+     * @param A the first matrix
+     * @param B the second matrix
+     * @return the addition
+     * @throws MatrixException
+     */
     public static Matrix add(Matrix A, Matrix B) throws MatrixException{
         if((A.colSize != B.colSize) || (A.rowSize != B.rowSize)){
             throw new MatrixException("Dimension mismatch, cannot add.");
@@ -217,5 +235,25 @@ public class Matrix {
         }
 
         return M;
+    }
+
+    /**
+     * Computes the tensor product of two matrices (the Kronecker product). If A is a mxn matrix and B is a pxq matrix,
+     * the result is a mpxnq size matrix.
+     * @param A the left matrix
+     * @param B the right matrix
+     * @return the tensor product
+     */
+    public static Matrix tensorProduct(Matrix A, Matrix B){
+        Matrix result = new Matrix(A.rowSize*B.rowSize, A.colSize*B.colSize);
+
+        for(int i=0;i<result.rowSize;i++){
+            for(int j=0;j<result.colSize;j++){
+                result.setElement(i, j, Complex.multComplex(A.getElement(i/B.rowSize, j/B.colSize),
+                                                            B.getElement(i%B.rowSize, j%B.colSize)));
+            }
+        }
+
+        return result;
     }
 }

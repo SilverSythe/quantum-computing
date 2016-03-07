@@ -43,6 +43,8 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
                 return i;
             }
         }
+
+        return -1;
     }
 
     /**
