@@ -87,17 +87,18 @@ public class Matrix {
 
     /**
      * Set this matrix to the identity matrix, but only if it is a square matrix.
+     * @throws MatrixException when not a square matrix
      */
     public void setIdentity() throws MatrixException{
         if(rowSize != colSize){
-            throw new MatrixException("Not a square matrix, cannot set to identity.");
+            throw new MatrixException("");
         }
         for(int i=0;i<rowSize;i++){
             for(int j=0;j<colSize;j++){
                 if(i==j){
-                    setElement(i, j, new Complex(1.0, 0.0));
+                    setElement(i, j, 1.0);
                 } else {
-                    setElement(i, j, new Complex(0.0, 0.0));
+                    setElement(i, j, 0.0);
                 }
             }
         }
@@ -122,6 +123,7 @@ public class Matrix {
     /**
      * Computes and returns the determinant of the matrix.
      * @return the determinant
+     * @throws MatrixException when not a square matrix
      */
     public double det() throws MatrixException{
         if(rowSize != colSize){
@@ -191,6 +193,7 @@ public class Matrix {
      * @param A the first (left) matrix
      * @param B the second (right) matrix
      * @return the result
+     * @throws MatrixException when the columns of the first matrix do not match the rows of the second matrix
      */
     public static Matrix mult(Matrix A, Matrix B) throws MatrixException{
         if(A.colSize != B.rowSize){
@@ -204,7 +207,7 @@ public class Matrix {
                 Complex value = new Complex(0.0, 0.0);
 
                 for(int k=0;k<A.colSize;k++){
-                    Complex.addComplex(value, Complex.multComplex(A.getElement(i,k), B.getElement(k,j)));
+                    value = Complex.addComplex(value, Complex.multComplex(A.getElement(i,k), B.getElement(k,j)));
                 }
 
                 M.setElement(i, j, value);
@@ -219,7 +222,7 @@ public class Matrix {
      * @param A the first matrix
      * @param B the second matrix
      * @return the addition
-     * @throws MatrixException
+     * @throws MatrixException when not a square matrix
      */
     public static Matrix add(Matrix A, Matrix B) throws MatrixException{
         if((A.colSize != B.colSize) || (A.rowSize != B.rowSize)){

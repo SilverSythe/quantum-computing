@@ -1,5 +1,6 @@
 package register;
 
+import mathStructs.Complex;
 import mathStructs.Matrix;
 
 /**
@@ -7,7 +8,8 @@ import mathStructs.Matrix;
  * allow multiple implementations of applying quantum gates to a specific qubit.
  */
 public abstract class AbstractQuantumRegister implements IQuantumRegister {
-    Matrix quantumRegister;
+    protected Matrix quantumRegister;
+    protected int qubitNum;
 
     /**
      * Default constructor. Creates a register of qubitNum qubits, making it a size 2^n x 1 size matrix.
@@ -15,6 +17,17 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
      */
     public AbstractQuantumRegister(int qubitNum){
         quantumRegister = new Matrix(1<<qubitNum, 1);
+        this.qubitNum = qubitNum;
+    }
+
+    /**
+     * Convenience method to avoid explicitly finding the value in the matrix.
+     * @param i the index of state whose probability amplitude to return
+     * @return the probability amplitude
+     */
+    @Override
+    public Complex getProbabilityAmplitude(int i){
+        return quantumRegister.getElement(i, 0);
     }
 
     /**
@@ -37,7 +50,7 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
         double cumulativeProbability = 0.0;
 
         for(int i=0;i<quantumRegister.getRowSize();i++){
-            cumulativeProbability += quantumRegister.getElement(i, 1).normSquared();
+            cumulativeProbability += quantumRegister.getElement(i, 0).normSquared();
 
             if(p<=cumulativeProbability){
                 return i;

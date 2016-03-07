@@ -70,10 +70,10 @@ public class Complex {
     public String toString() {
         double real = this.getReal();
         double imag = this.getImag();
-        if (imag >= 0.0) {
-            return real + " + " + imag + "i";
+        if(imag >= 0.0){
+            return String.format("%.3f + %.3fi", real, imag);
         } else {
-            return real + " - " + Math.abs(imag) + "i";
+            return String.format("%.3f - %.3fi", real, imag);
         }
     }
 
