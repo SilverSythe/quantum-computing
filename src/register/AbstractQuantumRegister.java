@@ -35,7 +35,7 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
      * @return the register size
      */
     @Override
-    public int getSize(){
+    public int getNumberOfStates(){
         return quantumRegister.getRowSize();
     }
 

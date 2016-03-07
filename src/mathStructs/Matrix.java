@@ -141,14 +141,19 @@ public class Matrix {
         Matrix orig = new Matrix(this);
         Matrix T = new Matrix(colSize, rowSize);
 
-        for(int i=0;i<rowSize;i++){
-            for(int j=0;j<colSize;j++){
+        for(int i=0;i<colSize;i++){
+            for(int j=0;j<rowSize;j++){
                 T.setElement(i, j, orig.getElement(j, i));
             }
         }
+
         for(int n=0;n<values.length;n++){
-            values[n] = T.getElement(n/rowSize, n%colSize);
+            values[n] = T.getElement(n/T.getColSize(), n%T.getColSize());
         }
+
+        int tmp = colSize;
+        colSize = rowSize;
+        rowSize = tmp;
     }
 
     public void invert(){
@@ -222,18 +227,41 @@ public class Matrix {
      * @param A the first matrix
      * @param B the second matrix
      * @return the addition
-     * @throws MatrixException when not a square matrix
+     * @throws MatrixException when matrices are not of equal size
      */
     public static Matrix add(Matrix A, Matrix B) throws MatrixException{
         if((A.colSize != B.colSize) || (A.rowSize != B.rowSize)){
             throw new MatrixException("Dimension mismatch, cannot add.");
         }
 
-        Matrix M = new Matrix();
+        Matrix M = new Matrix(A.rowSize, A.colSize);
 
         for(int i=0;i<M.rowSize;i++){
             for(int j=0;j<M.colSize;j++){
                 M.setElement(i, j, Complex.addComplex(A.getElement(i, j), B.getElement(i, j)));
+            }
+        }
+
+        return M;
+    }
+
+    /**
+     * Subtracts the second matrix from the first. Matrices must be of equal sizes.
+     * @param A the first matrix
+     * @param B the second matrix
+     * @return the subtraction
+     * @throws MatrixException when matrices are not of equal size
+     */
+    public static Matrix subtract(Matrix A, Matrix B) throws MatrixException{
+        if((A.colSize != B.colSize) || (A.rowSize != B.rowSize)){
+            throw new MatrixException("Dimension mismatch, cannot add.");
+        }
+
+        Matrix M = new Matrix(A.rowSize, A.colSize);
+
+        for(int i=0;i<M.rowSize;i++){
+            for(int j=0;j<M.colSize;j++){
+                M.setElement(i, j, Complex.subComplex(A.getElement(i, j), B.getElement(i, j)));
             }
         }
 

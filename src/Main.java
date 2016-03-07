@@ -1,20 +1,17 @@
-import gates.Hadamard;
+import algorithms.Grover;
 import mathStructs.MatrixException;
 import register.ExplicitQuantumRegister;
 
 public class Main {
 
     public static void main(String[] args) throws MatrixException {
-        ExplicitQuantumRegister register = new ExplicitQuantumRegister(3);
+        //32 state quantum register
+        ExplicitQuantumRegister register = new ExplicitQuantumRegister(5);
 
-        System.out.println(register.getRegister());
-
-        register.apply(new Hadamard(), 1);
-
-        System.out.println(register.getRegister());
-
-        register.apply(new Hadamard(), 1);
-
-        System.out.println(register.getRegister());
+        //Search for the number 26 in a list of 32
+        Grover grover = new Grover(26, 32);
+        grover.apply(register, 500);
+        //System.out.println(register.getRegister());
+        System.out.println(register.measure());
     }
 }

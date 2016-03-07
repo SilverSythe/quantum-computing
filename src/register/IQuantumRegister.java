@@ -10,13 +10,15 @@ import mathStructs.MatrixException;
  */
 public interface IQuantumRegister {
 
+    void apply(Matrix matrix) throws MatrixException;
+
     void apply(Gate gate, int qubitIndex) throws MatrixException;
 
     void apply(Gate gate, int qubitIndex1, int qubitIndex2) throws MatrixException;
 
     Complex getProbabilityAmplitude(int i);
 
-    int getSize();
+    int getNumberOfStates();
 
     int measure();
 
