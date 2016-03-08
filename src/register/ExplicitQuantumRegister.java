@@ -21,9 +21,9 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
     }
 
     /**
-     * Applies a matrix to the whole quantum register, which must be an nxn matrix where n is the amount of states in
-     * the quantum register.
-     * @param matrix the matrix to multiply the quantum register with
+     * Applies a matrix to the whole register register, which must be an nxn matrix where n is the amount of states in
+     * the register register.
+     * @param matrix the matrix to multiply the register register with
      */
     @Override
     public void apply(Matrix matrix) throws MatrixException{
@@ -31,9 +31,9 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
     }
 
     /**
-     * Applies a single qubit gate to the quantum register using explicit tensor products. It applies the identity to
+     * Applies a single qubit gate to the register register using explicit tensor products. It applies the identity to
      * all other qubits.
-     * @param gate the quantum gate to apply
+     * @param gate the register gate to apply
      * @param qubitIndex the index of the qubit to apply it to
      */
     @Override

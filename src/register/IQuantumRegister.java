@@ -6,7 +6,7 @@ import mathStructs.Matrix;
 import mathStructs.MatrixException;
 
 /**
- * An interface representing the functionality of a quantum register.
+ * An interface representing the functionality of a register register.
  */
 public interface IQuantumRegister {
 

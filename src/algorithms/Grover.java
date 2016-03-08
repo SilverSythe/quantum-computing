@@ -17,7 +17,7 @@ public class Grover {
 
     public void apply(AbstractQuantumRegister quantumRegister, int iterations) throws MatrixException {
         if(quantumRegister.getNumberOfStates() < listSize){
-            System.out.printf("Quantum register is too small, needs at least %f states.", listSize);
+            System.out.printf("Quantum register is too small, needs at least %d states.", listSize);
             return;
         }
 

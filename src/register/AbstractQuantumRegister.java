@@ -4,8 +4,8 @@ import mathStructs.Complex;
 import mathStructs.Matrix;
 
 /**
- * An abstract implementation of a quantum register of n qubits, leaving only the apply() method unimplemented as to
- * allow multiple implementations of applying quantum gates to a specific qubit.
+ * An abstract implementation of a register register of n qubits, leaving only the apply() method unimplemented as to
+ * allow multiple implementations of applying register gates to a specific qubit.
  */
 public abstract class AbstractQuantumRegister implements IQuantumRegister {
     protected Matrix quantumRegister;
@@ -31,7 +31,7 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
     }
 
     /**
-     * Returns the size of the quantum register, equal to 2^n where n is the amount of qubits
+     * Returns the size of the register register, equal to 2^n where n is the amount of qubits
      * @return the register size
      */
     @Override
@@ -40,7 +40,7 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
     }
 
     /**
-     * Simulates the measurement of the state of the quantum register. Each state has a probability of being measured
+     * Simulates the measurement of the state of the register register. Each state has a probability of being measured
      * equal to the square of the probability amplitude.
      * @return the result of the simulated measurement
      */
@@ -61,8 +61,8 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
     }
 
     /**
-     * Returns the quantum register in its entirety as a matrix
-     * @return the matrix representing the quantum register
+     * Returns the register register in its entirety as a matrix
+     * @return the matrix representing the register register
      */
     @Override
     public Matrix getRegister(){
