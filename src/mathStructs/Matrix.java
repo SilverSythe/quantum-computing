@@ -91,7 +91,7 @@ public class Matrix {
      */
     public void setIdentity() throws MatrixException{
         if(rowSize != colSize){
-            throw new MatrixException("");
+            throw new MatrixException("Matrix is not square.");
         }
         for(int i=0;i<rowSize;i++){
             for(int j=0;j<colSize;j++){

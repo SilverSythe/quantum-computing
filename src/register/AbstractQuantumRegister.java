@@ -1,13 +1,15 @@
 package register;
 
+import gates.Gate;
 import mathStructs.Complex;
 import mathStructs.Matrix;
+import mathStructs.MatrixException;
 
 /**
- * An abstract implementation of a register register of n qubits, leaving only the apply() method unimplemented as to
+ * An abstract implementation of a register register of n qubits, leaving only the apply() methods unimplemented as to
  * allow multiple implementations of applying register gates to a specific qubit.
  */
-public abstract class AbstractQuantumRegister implements IQuantumRegister {
+public abstract class AbstractQuantumRegister {
     protected Matrix quantumRegister;
     protected int qubitNum;
 
@@ -25,7 +27,6 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
      * @param i the index of state whose probability amplitude to return
      * @return the probability amplitude
      */
-    @Override
     public Complex getProbabilityAmplitude(int i){
         return quantumRegister.getElement(i, 0);
     }
@@ -34,7 +35,6 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
      * Returns the size of the register register, equal to 2^n where n is the amount of qubits
      * @return the register size
      */
-    @Override
     public int getNumberOfStates(){
         return quantumRegister.getRowSize();
     }
@@ -44,7 +44,6 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
      * equal to the square of the probability amplitude.
      * @return the result of the simulated measurement
      */
-    @Override
     public int measure(){
         double p = Math.random();
         double cumulativeProbability = 0.0;
@@ -64,8 +63,13 @@ public abstract class AbstractQuantumRegister implements IQuantumRegister {
      * Returns the register register in its entirety as a matrix
      * @return the matrix representing the register register
      */
-    @Override
     public Matrix getRegister(){
         return this.quantumRegister;
     }
+
+    public abstract void apply(Matrix matrix) throws MatrixException;
+
+    public abstract void apply(Gate gate, int qubitIndex) throws MatrixException;
+
+    public abstract void apply(Gate gate, int qubitIndex1, int qubitIndex2) throws MatrixException;
 }
