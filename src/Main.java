@@ -1,12 +1,13 @@
 import algorithms.Grover;
 import mathStructs.MatrixException;
+import register.AbstractQuantumRegister;
 import register.ExplicitQuantumRegister;
 
 public class Main {
 
     public static void main(String[] args) throws MatrixException {
         //32 state register register
-        ExplicitQuantumRegister register = new ExplicitQuantumRegister(9);
+        AbstractQuantumRegister register = new ExplicitQuantumRegister(9);
 
 
         //Search for the number 26 in a list of 32
