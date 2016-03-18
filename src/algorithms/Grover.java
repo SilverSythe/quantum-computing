@@ -25,11 +25,11 @@ public class Grover {
         oracle.setIdentity();
         oracle.setElement(answer, answer, -1.0);
 
-        /*Matrix registerTranspose = new Matrix(quantumRegister.getRegister());
+        Matrix registerTranspose = new Matrix(quantumRegister.getRegister());
         registerTranspose.transpose();
-        diffusion = Matrix.mult(quantumRegister.getRegister(), registerTranspose);*/
+        diffusion = Matrix.mult(quantumRegister.getRegister(), registerTranspose);
 
-        diffusion = Matrix.selfOuterProduct(quantumRegister.getRegister());
+        //diffusion = Matrix.selfOuterProduct(quantumRegister.getRegister());
 
         diffusion = Matrix.mult(2.0, diffusion);
         Matrix eye = new Matrix(quantumRegister.getNumberOfStates(), quantumRegister.getNumberOfStates());
