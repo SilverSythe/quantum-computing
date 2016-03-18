@@ -1,13 +1,24 @@
+import gates.CNOT;
+import gates.Hadamard;
+import gates.PauliX;
 import mathStructs.MatrixException;
+import register.AbstractQuantumRegister;
+import register.SmartQuantumRegister;
 
 public class Main {
 
     public static void main(String[] args) throws MatrixException {
+        AbstractQuantumRegister register = new SmartQuantumRegister(3);
 
-        /*
-        //Search for the number 26 in a list of 32
-        Grover grover = new Grover(123, 512);
-        grover.apply(register, 500);*/
-        //System.out.println(register.measure());
+        register.apply(new Hadamard(), 0);
+        register.apply(new Hadamard(), 2);
+        register.apply(new PauliX(), 2);
+        register.apply(new PauliX(), 0);
+
+        System.out.println(register.getRegister().toString());
+
+        register.apply(new CNOT(), 2, 0);
+
+        System.out.println(register.getRegister().toString());
     }
 }
