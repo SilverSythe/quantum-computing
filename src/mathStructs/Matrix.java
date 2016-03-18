@@ -287,4 +287,41 @@ public class Matrix {
 
         return result;
     }
+
+    /**
+     * Computes the outer product of a vector with itself. Designed to be more efficient that explicitly calculating it,
+     * since the resulting matrix is symmetric, giving a performance increase for large matrices.
+     * @param a a nx1 matrix representing a vector
+     * @return the outer product with its transpose
+     */
+    public static Matrix selfOuterProduct(Matrix a) throws MatrixException{
+        if(a.getColSize() != 1){
+            throw new MatrixException("Parameter a should be a vector, cannot compute outer product\n");
+        }
+
+        Matrix outerProduct = new Matrix(a.getRowSize(), a.getRowSize());
+
+        //Lower triangle calculations
+        for(int i=0;i<a.getRowSize()-1;i++){
+            for(int j=i+1;j<a.getRowSize();j++){
+                outerProduct.setElement(j, i, Complex.multComplex(a.getElement(j,0), a.getElement(i,0)));
+            }
+        }
+
+        //Diagonal
+        for(int i=0;i<a.getRowSize();i++){
+            outerProduct.setElement(i, i, Complex.multComplex(a.getElement(i, 0), a.getElement(i, 0)));
+        }
+
+        //Copy lower to upper triangular part
+        for(int i=0;i<a.getRowSize()-1;i++) {
+            for (int j = i + 1; j < a.getRowSize(); j++) {
+                outerProduct.setElement(j, i, outerProduct.getElement(i, j));
+            }
+        }
+
+        //System.out.println(outerProduct.toString());
+
+        return outerProduct;
+    }
 }

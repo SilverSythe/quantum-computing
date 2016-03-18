@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="plotapplication">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../ptolemy/plot/plotapplication.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../ptolemy/plot/plot.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

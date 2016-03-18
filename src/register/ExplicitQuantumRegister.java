@@ -4,30 +4,14 @@ import gates.Gate;
 import mathStructs.Matrix;
 import mathStructs.MatrixException;
 
+/**
+ * This implementation of a quantum register uses explicit tensor products to apply gates, making it simple but
+ * very slow.
+ */
 public class ExplicitQuantumRegister extends AbstractQuantumRegister {
-    /**
-     * Default constructor. Creates a register of qubitNum qubits, making it a size 2^n x 1 size matrix. Qubits are
-     * counted from 0, e.g. for 5 qubits all the indices are 0,1,2,3,4. All qubits are initially set to a superposition
-     * of the |0> and |1> state, meaning the register has a uniform distribution.
-     *
-     * @param qubitNum the amount of qubits
-     */
+
     public ExplicitQuantumRegister(int qubitNum) {
         super(qubitNum);
-        double uniformValue = 1.0 / Math.pow(2.0, qubitNum/2.0);
-        for(int n=0;n<quantumRegister.getRowSize();n++){
-            quantumRegister.setElement(n, 0, uniformValue);
-        }
-    }
-
-    /**
-     * Applies a matrix to the whole register register, which must be an nxn matrix where n is the amount of states in
-     * the register register.
-     * @param matrix the matrix to multiply the register register with
-     */
-    @Override
-    public void apply(Matrix matrix) throws MatrixException{
-        quantumRegister = Matrix.mult(matrix, quantumRegister);
     }
 
     /**
@@ -35,6 +19,7 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
      * all other qubits.
      * @param gate the register gate to apply
      * @param qubitIndex the index of the qubit to apply it to
+     * @throws MatrixException when matrix is not a 2^n x 2^n matrix corresponding to the register's size
      */
     @Override
     public void apply(Gate gate, int qubitIndex) throws MatrixException {
@@ -61,6 +46,5 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
 
     @Override
     public void apply(Gate gate, int qubitIndex1, int qubitIndex2) throws MatrixException {
-
     }
 }

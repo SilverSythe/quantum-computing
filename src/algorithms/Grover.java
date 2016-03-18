@@ -25,9 +25,12 @@ public class Grover {
         oracle.setIdentity();
         oracle.setElement(answer, answer, -1.0);
 
-        Matrix registerTranspose = new Matrix(quantumRegister.getRegister());
+        /*Matrix registerTranspose = new Matrix(quantumRegister.getRegister());
         registerTranspose.transpose();
-        diffusion = Matrix.mult(quantumRegister.getRegister(), registerTranspose);
+        diffusion = Matrix.mult(quantumRegister.getRegister(), registerTranspose);*/
+
+        diffusion = Matrix.selfOuterProduct(quantumRegister.getRegister());
+
         diffusion = Matrix.mult(2.0, diffusion);
         Matrix eye = new Matrix(quantumRegister.getNumberOfStates(), quantumRegister.getNumberOfStates());
         eye.setIdentity();
@@ -37,7 +40,31 @@ public class Grover {
         for(int i=0;i<iterations;i++){
             quantumRegister.apply(oracle);
             quantumRegister.apply(diffusion);
+
+            System.out.printf("n=%d: P=%f\n", i+1, quantumRegister.getProbabilityAmplitude(answer).normSquared());
         }
+    }
+
+    public void singleIteration(AbstractQuantumRegister quantumRegister) throws MatrixException{
+        if(quantumRegister.getNumberOfStates() < listSize){
+            System.out.printf("Quantum register is too small, needs at least %d states.\n", listSize);
+            return;
+        }
+
+        oracle = new Matrix(quantumRegister.getNumberOfStates(), quantumRegister.getNumberOfStates());
+        oracle.setIdentity();
+        oracle.setElement(answer, answer, -1.0);
+
+        Matrix registerTranspose = new Matrix(quantumRegister.getRegister());
+        registerTranspose.transpose();
+        diffusion = Matrix.mult(quantumRegister.getRegister(), registerTranspose);
+        diffusion = Matrix.mult(2.0, diffusion);
+        Matrix eye = new Matrix(quantumRegister.getNumberOfStates(), quantumRegister.getNumberOfStates());
+        eye.setIdentity();
+        diffusion = Matrix.subtract(diffusion, eye);
+
+        quantumRegister.apply(oracle);
+        quantumRegister.apply(diffusion);
     }
 
     public int getAnswer() {

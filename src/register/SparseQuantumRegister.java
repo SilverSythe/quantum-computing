@@ -1,7 +1,6 @@
 package register;
 
 import gates.Gate;
-import mathStructs.Matrix;
 import mathStructs.MatrixException;
 
 public class SparseQuantumRegister extends AbstractQuantumRegister {
@@ -12,11 +11,6 @@ public class SparseQuantumRegister extends AbstractQuantumRegister {
      */
     public SparseQuantumRegister(int qubitNum) {
         super(qubitNum);
-    }
-
-    @Override
-    public void apply(Matrix matrix) throws MatrixException {
-        quantumRegister = Matrix.mult(matrix, quantumRegister);
     }
 
     //TODO: implement application of sparse matrix to quantum register
