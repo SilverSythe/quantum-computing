@@ -21,6 +21,9 @@ public class Grover {
             return;
         }
 
+        //Grover's algorithm requires a uniform superposition to start with
+        quantumRegister.setUniformSuperposition();
+
         oracle = new Matrix(quantumRegister.getNumberOfStates(), quantumRegister.getNumberOfStates());
         oracle.setIdentity();
         oracle.setElement(answer, answer, -1.0);

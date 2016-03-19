@@ -4,21 +4,21 @@ public class Complex {
     private double real;
     private double imag;
 
-    /** Default constructor. Constructs a new com.company.Complex number with both components set to 0.
+    /** Default constructor. Constructs a new Complex number with both components set to 0.
      */
     public Complex() {
         this.setComplex(0.0, 0.0);
     }
 
-    /** Copy constructor. Creates a new com.company.Complex object using another.
+    /** Copy constructor. Creates a new Complex object using another.
      *
-     * @param original the com.company.Complex object to be copied
+     * @param original the Complex object to be copied
      */
     public Complex(Complex original) {
         this.setComplex(original.getReal(), original.getImag());
     }
 
-    /** Explicit constructor. Constructs a new com.company.Complex using a real and complex part.
+    /** Explicit constructor. Constructs a new Complex using a real and complex part.
      *
      * @param real a double representing the real part
      * @param imag a double representing the imaginary part
@@ -63,7 +63,7 @@ public class Complex {
     public double getImag() { return this.imag; }
 
 
-    /** Creates a String representation of the com.company.Complex object.
+    /** Creates a String representation of the Complex object.
      *
      * @return the string representation
      */
@@ -95,23 +95,36 @@ public class Complex {
 
     /** Returns the complex conjugate of the complex number.
      *
-     * @return the com.company.Complex object representing the complex conjugate
+     * @return the Complex object representing the complex conjugate
      */
     public Complex conj() {
         return new Complex(this.getReal(),-this.getImag());
     }
 
-    /** Adds two com.company.Complex numbers.
+    /**
+     * Finds the n-th power of the complex number.
+     * @param n the exponent
+     * @return the result
+     */
+    public Complex powerComplex(int n){
+        double r = this.norm();
+        double theta = Math.atan2(imag, real);
+
+        Complex out = new Complex(Math.cos((double)n * theta), Math.sin((double)n * theta));
+        return Complex.multComplex(out, Math.pow(r, (double)n));
+    }
+
+    /** Adds two Complex numbers.
      *
-     * @param a the first com.company.Complex
-     * @param b the second com.company.Complex
+     * @param a the first Complex
+     * @param b the second Complex
      * @return the sum
      */
     public static Complex addComplex(Complex a, Complex b) {
         return new Complex(a.getReal() + b.getReal(), a.getImag() + b.getImag());
     }
 
-    /** Subtracts two com.company.Complex numbers.
+    /** Subtracts two Complex numbers.
      *
      * @param a the first complex number
      * @param b the second complex number
@@ -121,7 +134,7 @@ public class Complex {
         return new Complex(a.getReal() - b.getReal(), a.getImag() - b.getImag());
     }
 
-    /** Multiplies two com.company.Complex numbers.
+    /** Multiplies two Complex numbers.
      *
      * @param a the first complex number
      * @param b the second complex number
@@ -132,9 +145,9 @@ public class Complex {
                 a.getReal()*b.getImag() + a.getImag()*b.getReal());
     }
 
-    /** Multiplies a com.company.Complex number by a real number.
+    /** Multiplies a Complex number by a real number.
      *
-     * @param a the com.company.Complex numer
+     * @param a the Complex numer
      * @param b the real number
      * @return the result
      */
@@ -142,21 +155,21 @@ public class Complex {
         return new Complex(a.getReal()*b, a.getImag()*b);
     }
 
-    /** Divides a com.company.Complex by a real number.
+    /** Divides a Complex by a real number.
      *
-     * @param a a com.company.Complex numerator
+     * @param a a Complex numerator
      * @param b the real denominator
-     * @return the com.company.Complex result
+     * @return the Complex result
      */
     public static Complex divideComplex(Complex a, double b) {
         return new Complex(a.getReal()/b, a.getImag()/b);
     }
 
-    /** Divides a com.company.Complex by another com.company.Complex number.
+    /** Divides a Complex by another Complex number.
      *
-     * @param a the com.company.Complex numerator
-     * @param b the com.company.Complex denominator
-     * @return the com.company.Complex result
+     * @param a the Complex numerator
+     * @param b the Complex denominator
+     * @return the Complex result
      */
     public static Complex divideComplex(Complex a, Complex b) {
         return divideComplex(multComplex(a,b.conj()), b.normSquared());

@@ -15,19 +15,50 @@ public abstract class AbstractQuantumRegister {
 
     /**
      * Default constructor. Creates a register of qubitNum qubits, making it a size 2^n x 1 size matrix. Qubits are
-     * counted from 0, e.g. for 5 qubits all the indices are 0,1,2,3,4. All qubits are initially set to a superposition
-     * of the |0> and |1> state, meaning the register has a uniform distribution over the 2^n states.
-     *
+     * counted from 0, e.g. for 5 qubits all the indices are 0,1,2,3,4. All qubits are initially set to state |0>.
      * @param qubitNum the amount of qubits
      */
     public AbstractQuantumRegister(int qubitNum){
         quantumRegister = new Matrix(1<<qubitNum, 1);
         this.qubitNum = qubitNum;
 
+        quantumRegister.setElement(0, 0, 1.0);
+    }
+
+    /**
+     * Sets a register to a uniform superposition over all values. In theory this would be achieved by applying the
+     * Hadamard gate to all qubits, but in the interest of efficiency this is implemented by assigning equal probability
+     * amplitudes to all states.
+     */
+    public void setUniformSuperposition(){
         //Create a uniform distribution
-        double uniformValue = 1.0 / Math.pow(2.0, qubitNum/2.0);
+        double uniformValue = 1.0 / (1 << (qubitNum>>1));
         for(int n=0;n<quantumRegister.getRowSize();n++){
             quantumRegister.setElement(n, 0, uniformValue);
+        }
+    }
+
+    /**
+     * Sets the quantum register the state |0>.
+     */
+    public void setZero(){
+        quantumRegister.setElement(1, 0, 1.0);
+        for(int i=1;i<quantumRegister.getRowSize();i++){
+            quantumRegister.setElement(i, 0, 0.0);
+        }
+    }
+
+    /**
+     * Renormalises the quantum register to make sure all the squares of the probability amplitudes add up to 1.
+     */
+    public void renormalise(){
+        double factor = 0.0;
+        for(int n=0;n<quantumRegister.getRowSize();n++){
+            factor += quantumRegister.getElement(n, 0).normSquared();
+        }
+
+        for(int n=0;n<quantumRegister.getRowSize();n++){
+            quantumRegister.setElement(n, 0, Complex.divideComplex(quantumRegister.getElement(n, 0), Math.sqrt(factor)));
         }
     }
 
@@ -41,6 +72,11 @@ public abstract class AbstractQuantumRegister {
     }
 
     /**
+     * Convenience method to set a probability amplitude explicitly. This is not realistic, but can be useful.
+     */
+    public void setProbabilityAmplitude(Complex c, int i){ quantumRegister.setElement(i, 0, c); }
+
+    /**
      * Returns the size of the register, equal to 2^n where n is the amount of qubits.
      * @return the register size
      */
@@ -49,8 +85,9 @@ public abstract class AbstractQuantumRegister {
     }
 
     /**
-     * Simulates the measurement of the state of the register. Each state has a probability of being measured
-     * equal to the square of the probability amplitude.
+     * Simulates the measurement of the state of the whole register. Each state has a probability of being measured
+     * equal to the square of the probability amplitude. Once the measurement is complete, the state collapses onto
+     * the result of the measurement wrt one of the 2^n basis states.
      * @return the result of the simulated measurement
      */
     public int measure(){
@@ -61,11 +98,94 @@ public abstract class AbstractQuantumRegister {
             cumulativeProbability += quantumRegister.getElement(i, 0).normSquared();
 
             if(p<=cumulativeProbability){
+                collapse(i);
                 return i;
             }
         }
 
         return -1;
+    }
+
+    /**
+     * Measures the j-th qubit of the register, returning either 1 or 0 and partially collapsing the register, reducing
+     * the non-zero valued states by a factor of 1/2.
+     * @return the result of the simulated measurement
+     */
+    public int measureQubit(int j){
+        //Probability that the qubit will be |0>; the probability of it being |1> is just 1-P(|0>)
+        double probabilityZero = 0.0;
+
+        //The bit to check
+        int i = (qubitNum-1) - j;
+
+        //Check all states that have the i-th bit equal to 0
+        for(int n=0;n<quantumRegister.getRowSize();n++){
+            if(((n>>i) & 1) == 0){
+                probabilityZero += quantumRegister.getElement(n, 0).normSquared();
+            }
+        }
+
+        //Collapse all states into the result of the measurement and return the result of the measurement
+        if(Math.random() > probabilityZero){
+            for(int n=0;n<quantumRegister.getRowSize();n++){
+                if(((n>>i) & 1) == 0){
+                    quantumRegister.setElement(n, 0, 0.0);
+                } else {
+                    quantumRegister.setElement(n, 0, Complex.divideComplex(quantumRegister.getElement(n, 0), Math.sqrt(1.0 - probabilityZero)));
+                }
+            }
+            return 1;
+        } else {
+            for(int n=0;n<quantumRegister.getRowSize();n++){
+                if(((n>>i) & 1) == 1){
+                    quantumRegister.setElement(n, 0, 0.0);
+                } else {
+                    quantumRegister.setElement(n, 0, Complex.divideComplex(quantumRegister.getElement(n, 0), Math.sqrt(probabilityZero)));
+                }
+            }
+            return 0;
+        }
+    }
+
+    /**
+     * Measures all qubits from i to j (inclusive) in the quantum register. i must be smaller than j.
+     * @param i the lower qubit index
+     * @param j the upper qubit index
+     */
+    public void measureQubits(int i, int j){
+        int i_ = (qubitNum-1) - i;
+        int j_ = (qubitNum-1) - j;
+
+        for(int n=j_;n<=i_;n++){
+            measureQubit(n);
+        }
+    }
+
+    /**
+     * Collapses a quantum register onto value i, setting that probability amplitude to 1 and all others to 0, usually
+     * as a result of a measurement.
+     * @param i the value to collapse the register onto
+     */
+    public void collapse(int i){
+        for(int k=0;k<quantumRegister.getRowSize();k++){
+            if(k == i){
+                quantumRegister.setElement(k, 0, 1.0);
+            } else {
+                quantumRegister.setElement(k, 0, 0.0);
+            }
+        }
+    }
+
+    /**
+     * Helper method to check whether the register is still properly normalised, useful for debugging.
+     * @return the total probability of the register
+     */
+    public double checkNormalisation(){
+        double norm = 0.0;
+        for(int n=0;n<getNumberOfStates();n++){
+            norm += getProbabilityAmplitude(n).normSquared();
+        }
+        return norm;
     }
 
     /**
