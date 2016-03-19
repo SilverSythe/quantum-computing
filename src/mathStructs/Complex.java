@@ -73,7 +73,7 @@ public class Complex {
         if(imag >= 0.0){
             return String.format("%.3f + %.3fi", real, imag);
         } else {
-            return String.format("%.3f - %.3fi", real, imag);
+            return String.format("%.3f - %.3fi", real, -imag);
         }
     }
 
