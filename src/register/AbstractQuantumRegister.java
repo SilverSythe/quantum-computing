@@ -30,6 +30,19 @@ public abstract class AbstractQuantumRegister {
             quantumRegister.setElement(n, 0, uniformValue);
         }
     }
+    
+    /**
+     * Default constructor. Creates a register of qubitNum qubits, making it a size 2^n x 1 size matrix.
+     *Register is initially set to be in a certain state
+     * @param qubitNum the amount of qubits
+     * @param qubitIndex the initial state of the Register
+     */
+    public AbstractQuantumRegister(int qubitNum,int qubitIndex){
+        quantumRegister = new Matrix(1<<qubitNum, 1);
+        this.qubitNum = qubitNum;
+
+        quantumRegister.setElement(qubitIndex, 0, 1);
+    }
 
     /**
      * Convenience method to finding the value in the underlying matrix.
@@ -89,4 +102,8 @@ public abstract class AbstractQuantumRegister {
     public abstract void apply(Gate gate, int qubitIndex) throws MatrixException;
 
     public abstract void apply(Gate gate, int qubitIndex1, int qubitIndex2) throws MatrixException;
+    
+    public int getQubitNumber(){
+        return qubitNum;
+    }
 }
