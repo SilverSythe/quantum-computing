@@ -73,7 +73,7 @@ public class Complex {
         if(imag >= 0.0){
             return String.format("%.3f + %.3fi", real, imag);
         } else {
-            return String.format("%.3f - %.3fi", real, imag);
+            return String.format("%.3f +%.3fi", real, imag);
         }
     }
 
@@ -106,12 +106,11 @@ public class Complex {
      * @param n the exponent
      * @return the result
      */
-    public Complex powerComplex(int n){
+    public void powerComplex(int n){
         double r = this.norm();
         double theta = Math.atan2(imag, real);
-
-        Complex out = new Complex(Math.cos((double)n * theta), Math.sin((double)n * theta));
-        return Complex.multComplex(out, Math.pow(r, (double)n));
+        real = Math.cos((double)n * theta) * Math.pow(r, (double)n);
+        imag = Math.sin((double)n * theta) * Math.pow(r, (double)n);
     }
 
     /** Adds two Complex numbers.

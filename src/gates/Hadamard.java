@@ -2,10 +2,10 @@ package gates;
 
 import mathStructs.Matrix;
 
-public class Hadamard extends Gate {
+public class Hadamard extends SingleQubitGate {
 
     public Hadamard() {
-        gate = new Matrix(2, 2);
+        super();
         gate.setElement(0, 0, 1.0);
         gate.setElement(1, 0, 1.0);
         gate.setElement(0, 1, 1.0);

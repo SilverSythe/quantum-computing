@@ -1,4 +1,4 @@
-import gates.Hadamard;
+import gates.PauliX;
 import mathStructs.MatrixException;
 import register.AbstractQuantumRegister;
 import register.SmartQuantumRegister;
@@ -6,23 +6,27 @@ import register.SmartQuantumRegister;
 public class Main {
 
     public static void main(String[] args) throws MatrixException {
+
         /*
-        AbstractQuantumRegister register = new SmartQuantumRegister(3);
+        AbstractQuantumRegister explicitQuantumRegister = new ExplicitQuantumRegister(3);
 
-        register.apply(new Hadamard(), 0);
-        register.apply(new Hadamard(), 2);
-        register.apply(new PauliX(), 2);
-        register.apply(new PauliX(), 0);
+        explicitQuantumRegister.apply(new PauliX(), 2);
 
-        System.out.println(register.getRegister().toString());
+        explicitQuantumRegister.apply(new CNOT(), 2, 0);
 
-        register.apply(new CNOT(), 2, 0);
+        //System.out.println(explicitQuantumRegister.measureQubit(2));
+        System.out.println(explicitQuantumRegister.getRegister().toString());
 
-        System.out.println(register.getRegister().toString());*/
+        System.out.println("\n\n\n");*/
 
-        AbstractQuantumRegister register = new SmartQuantumRegister(3);
-        register.apply(new Hadamard(), 0);
-        register.apply(new Hadamard(), 1);
-        register.apply(new Hadamard(), 2);
+
+        AbstractQuantumRegister smartQuantumRegister = new SmartQuantumRegister(3);
+
+        smartQuantumRegister.apply(new PauliX(), 2);
+
+        //smartQuantumRegister.apply(new CNOT(), 0, 2);
+
+        //System.out.println(explicitQuantumRegister.measureQubit(2));
+        System.out.println(smartQuantumRegister.toString());
     }
 }

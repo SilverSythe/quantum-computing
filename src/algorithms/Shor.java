@@ -4,22 +4,40 @@ import mathStructs.Complex;
 import mathStructs.MatrixException;
 import register.AbstractQuantumRegister;
 
+import java.util.Random;
+
 public class Shor {
     int N;
+    int iterations_;
 
     public Shor(int N){
         this.N = N;
+        iterations_ = 0;
     }
 
-    public int[] apply(AbstractQuantumRegister inputRegister, AbstractQuantumRegister outputRegister) throws MatrixException{
-        int q = (int)(Math.log(N)/Math.log(2)) + 1;
+    public int[] apply(AbstractQuantumRegister inputRegister, AbstractQuantumRegister outputRegister, boolean printStatus) throws MatrixException{
+        int q = 0;
+
+        for(int q_=0;q_<25;q_++){
+            if((1<<q_)>=N*N && (1<<q_)<2*N*N){
+                q = q_;
+            }
+        }
+
+        for(int k=2; k<=Math.log(N)/Math.log(2); k++){
+            double val = Math.pow(N, 1.0 / k);
+            if(Math.abs(val - (int)val) == 0){
+                System.out.printf("Cannot use Shor's algorithm, N is a power of a prime: N=%d^%d\n", (int)val, k);
+                return new int[2];
+            }
+        }
 
         if(inputRegister.getNumberOfStates() < (1<<q)){
-            System.out.printf("Input register does not have enough states, needs at least %d to run.\n", 1<<q);
+            if(printStatus) System.out.printf("Input register does not have enough states, needs at least %d qubits to run.\n", q);
             return new int[2];
         }
-        if(outputRegister.getNumberOfStates() < N){
-            System.out.printf("Output register does not have enough states, needs at least %d to run.\n", N);
+        if(outputRegister.getNumberOfStates() < (1<<q)){
+            if(printStatus) System.out.printf("Output register does not have enough states, needs at least %d qubits to run.\n", q);
             return new int[2];
         }
 
@@ -28,80 +46,95 @@ public class Shor {
             return new int[] {2, N/2};
         }
 
-        int x = 1;
-        int r = 0;
+        Random rand = new Random();
 
-        while(x<N) {
-            //If a is a non-trivial factor, no further calculation is needed
-            if (gcd(x, N) != 1) {
-                return new int[]{x, N / x};
+        int x = rand.nextInt(N-2) + 2;
+        int r = 0;
+        int iterations = 0;
+
+        while(iterations < 1E5) {
+            if(printStatus) System.out.printf("Generated value: x=%d.\n", x);
+            //If x is coprime to N, we can continue
+            while(gcd(x, N) != 1){
+                if(printStatus) System.out.printf("%d is not coprime with %d. Trying new x...\n\n", x, N);
+                x = rand.nextInt(N-2) + 2;
+                if(printStatus) System.out.printf("Generated value: x=%d.\n", x);
             }
 
             inputRegister.setUniformSuperposition();
             outputRegister.setZero();
 
-            //TODO: USE PHASE ESTIMATION INSTEAD
-            //Apply the function x^a mod N for a=0 to 2^q - 1 to the second register
-            for(int a=0; a<inputRegister.getNumberOfStates(); a++){
-                int value = (int)Math.pow(x, a) % N;
+            //Apply the function x^a expMod N for a=0 to 2^q - 1 to the second register
+            for(int a=0; a<outputRegister.getNumberOfStates(); a++){
+                int value = expMod(x, a, N);
                 outputRegister.setProbabilityAmplitude(new Complex(1.0, 0.0), value);
             }
 
-            outputRegister.renormalise();
+            System.out.println();
 
-            //System.out.println(outputRegister.getRegister().toString());
+            outputRegister.renormalise();
 
             //Measure the output register to obtain a value k, which collapses the first input register. This is done
             //explicitly here in code, but in a real quantum computer this would happen immediately upon measurement
             //as a direct consequence of quantum mechanics
             int k = outputRegister.measure();
-
+            if(printStatus) System.out.printf("Measured second register, with result: k=%d\n", k);
             for(int a=0; a<inputRegister.getNumberOfStates(); a++){
-                if((int)Math.pow(x, a) % N != k){
+                if(expMod(x, a, N) != k){
                     inputRegister.setProbabilityAmplitude(new Complex(0.0, 0.0), a);
                 }
             }
 
             inputRegister.renormalise();
 
-            //Calculate the smallest period r of f(x) = a^x mod N
-
+            //Calculate the smallest period r of f(x) = a^x expMod N
             //Perform QFT on input register
-            QuantumFourierTransform.applyQFT(inputRegister);
+            if(printStatus) System.out.printf("Applying QFT to first register...\n");
+            QFT.applyQFT(inputRegister);
 
+            //Measuring the input register will collapse the state onto a specific value
             int m = inputRegister.measure();
 
-            r = denominator((double)m/(double)q, q);
+            if(printStatus) System.out.printf("Measuring first register, with result: m=%d\n", m);
 
-            if((r % 2 == 0)){
-                if(2*r<q){
-                    r*=2;
-                } else {
-                    break;
+            //Find a rational approximation of m/2^q, whose denominator could be the period (or a multiple thereof)
+            r = rationalApproxDenom((double)m/(double)(1<<q), (1<<q));
+            if(printStatus) System.out.printf("Period estimation: r=%d\n", r);
+
+            if((r % 2 != 0) && (2*r<(1<<q))){
+                if(printStatus) System.out.printf("Period was found to be odd, multiplying by 2.\n");
+                r*=2;
+            }
+
+            //r must be positive and nonzero
+            if(r>0) {
+                int val;
+                //Try multiples of r
+                for (int c = 1; c < q; c++) {
+                    val = expMod(x, c * r / 2, N);
+
+                    if (printStatus) System.out.printf("Trying multiple: r' = %d * %d = %d.\n", c, r, c * r);
+                    if (val != 1) {
+                        if (gcd(val + 1, N) * gcd(val - 1, N) == N && gcd(val + 1, N) != 1 && gcd(val - 1, N) != 1) {
+                            if (printStatus) System.out.printf("Period r=%d works! Returning factors...\n", c * r);
+
+                            if (printStatus)
+                                System.out.printf("\nNumber of iterations taken: n=%d\n\n", iterations + 1);
+                            this.iterations_ = iterations + 1;
+                            return new int[]{gcd(val + 1, N), gcd(val - 1, N)};
+                        }
+                    }
                 }
             }
 
-            if (((int) Math.pow(x, r << 1) == -1 % N)) {
-                break;
-            }
+            //If this doesn't work, try a new value of x
+            if(printStatus) System.out.printf("Starting over...\n\n");
+            x = rand.nextInt(N-2) + 2;
 
-            //Try a new value of a
-            x++;
+            iterations++;
         }
-        int val = (int)Math.pow(x, r<<1);
-        return new int[] {gcd(val+1, N), gcd(val-1, N)};
-    }
 
-    /**
-     * Helper method to apply f(x) to the output register (qubits Q -> 2Q-1) where f(x) = a^x mod N and x is the
-     * corresponding input value, i.e. it turns the state sum(|x>|0>) for x=0 to Q-1 to the state sum(|x,f(x)>) for
-     * x=0 to Q-1.
-     * @param register
-     * @param a
-     * @param N
-     */
-    private void createModuloCircuit(AbstractQuantumRegister register, int a, int N){
-
+        return new int[2];
     }
 
     /**
@@ -136,28 +169,56 @@ public class Shor {
      * @param qmax the maximum number to return
      * @return the denominator of the rational approximation
      */
-     public int denominator(double c, int qmax) {
-        double y = c;
-        double z;
-        int q0 = 0;
-        int q1 = 1;
-        int q2 = 0;
-        while (true) {
-            z = y - (int)y;
-            if (z < 0.5 / Math.pow(qmax,2)) {
-                return(q1);
-            }
-            if (z != 0) {
-                y = 1.0 / z;
-            } else {
-                return(q1);
-            }
-            q2 = (int)y * q1 + q0;
-            if (q2 >= qmax) {
-                return(q1);
-            }
-            q0 = q1;
-            q1 = q2;
+     public int rationalApproxDenom(double c, int qmax) {
+         double c_ = c;
+         double z;
+         int a0 = 0;
+         int a1 = 1;
+         int a2 = 0;
+         while (true) {
+             z = c_ - (int)c_;
+             if (z < 0.5 / Math.pow(qmax,2)) {
+                 return(a1);
+             }
+
+             if (z != 0) {
+                 c_ = 1.0 / z;
+             } else {
+                 return(a1);
+             }
+
+             a2 = (int)c_ * a1 + a0;
+             if (a2 >= qmax) {
+                 return(a1);
+             }
+
+             a0 = a1;
+             a1 = a2;
+         }
+     }
+
+    /**
+     * Returns the number of (quantum) iterations of the last run of the algorithm.
+     * @return the number of iterations
+     */
+    public int getLastRunIterations(){
+        return iterations_;
+    }
+
+    /**
+     * Finds f(x,a,N) = x^a mod N efficiently, without having to compute x^a explicitly.
+     * @return the result of the function evaluation
+     */
+    public int expMod(int base, int exponent, int modulus){
+        if (modulus == 1){
+            return 0;
         }
+
+        int c = 1;
+        for (int e_ = 1; e_ <= exponent; e_++) {
+            c = (c * base) % modulus;
+        }
+
+        return c;
     }
 }

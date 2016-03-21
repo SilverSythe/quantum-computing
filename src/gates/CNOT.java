@@ -1,13 +1,13 @@
 package gates;
 
-import mathStructs.Matrix;
+public class CNOT extends TwoQubitGate {
 
-public class CNOT extends Gate {
     public CNOT(){
-        gate = new Matrix(4, 4);
+        super();
         gate.setElement(0, 0, 1.0);
         gate.setElement(1, 1, 1.0);
         gate.setElement(2, 3, 1.0);
-        gate.setElement(2, 3, 1.0);
+        gate.setElement(3, 2, 1.0);
     }
+
 }

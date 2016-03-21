@@ -1,6 +1,7 @@
 package register;
 
-import gates.Gate;
+import gates.SingleQubitGate;
+import gates.TwoQubitGate;
 import mathStructs.Complex;
 import mathStructs.Matrix;
 import mathStructs.MatrixException;
@@ -85,6 +86,12 @@ public abstract class AbstractQuantumRegister {
     }
 
     /**
+     * Returns the amount of qubits the register has.
+     * @return the number of qubits
+     */
+    public int getQubitNumber(){ return qubitNum; }
+
+    /**
      * Simulates the measurement of the state of the whole register. Each state has a probability of being measured
      * equal to the square of the probability amplitude. Once the measurement is complete, the state collapses onto
      * the result of the measurement wrt one of the 2^n basis states.
@@ -125,24 +132,24 @@ public abstract class AbstractQuantumRegister {
             }
         }
 
+        System.out.printf("THE PROBABILITY IS %f\n", probabilityZero);
+
         //Collapse all states into the result of the measurement and return the result of the measurement
         if(Math.random() > probabilityZero){
             for(int n=0;n<quantumRegister.getRowSize();n++){
                 if(((n>>i) & 1) == 0){
                     quantumRegister.setElement(n, 0, 0.0);
-                } else {
-                    quantumRegister.setElement(n, 0, Complex.divideComplex(quantumRegister.getElement(n, 0), Math.sqrt(1.0 - probabilityZero)));
                 }
             }
+            renormalise();
             return 1;
         } else {
             for(int n=0;n<quantumRegister.getRowSize();n++){
                 if(((n>>i) & 1) == 1){
                     quantumRegister.setElement(n, 0, 0.0);
-                } else {
-                    quantumRegister.setElement(n, 0, Complex.divideComplex(quantumRegister.getElement(n, 0), Math.sqrt(probabilityZero)));
                 }
             }
+            renormalise();
             return 0;
         }
     }
@@ -197,6 +204,20 @@ public abstract class AbstractQuantumRegister {
     }
 
     /**
+     * Returns a String representation of the quantum register.
+     * @return the String representation
+     */
+    public String toString(){
+        String out = "";
+        for(int i=0; i<quantumRegister.getRowSize(); i++){
+            out += String.format("%s ", quantumRegister.getElement(i, 0).toString());
+            out += String.format("|%d>     P=%.3f           ( |%s> )\n\n", i, quantumRegister.getElement(i, 0).normSquared(), Integer.toBinaryString(i));
+        }
+
+        return out;
+    }
+
+    /**
      * Applies a matrix to the whole register, which must be an nxn matrix where n is the amount of states in
      * the register.
      * @param matrix the matrix to multiply the register register with
@@ -206,7 +227,7 @@ public abstract class AbstractQuantumRegister {
         quantumRegister = Matrix.mult(matrix, quantumRegister);
     }
 
-    public abstract void apply(Gate gate, int qubitIndex) throws MatrixException;
+    public abstract void apply(SingleQubitGate gate, int qubitIndex) throws MatrixException;
 
-    public abstract void apply(Gate gate, int qubitIndex1, int qubitIndex2) throws MatrixException;
+    public abstract void apply(TwoQubitGate gate, int qubitIndex1, int qubitIndex2) throws MatrixException;
 }

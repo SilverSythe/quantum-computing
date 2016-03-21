@@ -1,12 +1,11 @@
 package gates;
 
 import mathStructs.Complex;
-import mathStructs.Matrix;
 
-public class Phase extends Gate {
+public class Phase extends SingleQubitGate {
 
     public Phase(double angle){
-        gate = new Matrix(2, 2);
+        super();
         gate.setElement(0, 0, 1.0);
         gate.setElement(1, 0, 0.0);
         gate.setElement(0, 1, 0.0);

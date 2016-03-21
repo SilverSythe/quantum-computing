@@ -1,6 +1,7 @@
 package register;
 
-import gates.Gate;
+import gates.SingleQubitGate;
+import gates.TwoQubitGate;
 import mathStructs.Matrix;
 import mathStructs.MatrixException;
 
@@ -22,7 +23,7 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
      * @throws MatrixException when matrix is not a 2^n x 2^n matrix corresponding to the register's size
      */
     @Override
-    public void apply(Gate gate, int qubitIndex) throws MatrixException {
+    public void apply(SingleQubitGate gate, int qubitIndex) throws MatrixException {
         Matrix totalMatrix = new Matrix(1, 1);
         totalMatrix.setElement(0, 0, 1.0);
 
@@ -30,13 +31,15 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
         Matrix eye = new Matrix(2,2);
         eye.setIdentity();
 
-        for(int k=0;k<qubitIndex;k++){
+        int i = (qubitNum-1) - qubitIndex;
+
+        for(int k=0;k<i;k++){
             totalMatrix = Matrix.tensorProduct(totalMatrix, eye);
         }
 
         totalMatrix = Matrix.tensorProduct(totalMatrix, gate.getGateMatrix());
 
-        for(int k=0;k<qubitNum-qubitIndex-1;k++){
+        for(int k=0;k<qubitNum-i-1;k++){
             totalMatrix = Matrix.tensorProduct(totalMatrix, eye);
         }
 
@@ -45,9 +48,13 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
     }
 
     @Override
-    public void apply(Gate gate, int qubitIndex1, int qubitIndex2) throws MatrixException {
+    public void apply(TwoQubitGate gate, int qubitIndex1, int qubitIndex2) throws MatrixException {
         Matrix totalMatrix = new Matrix(1, 1);
         totalMatrix.setElement(0, 0, 1.0);
+
+        //TODO: consider cases where qubit1 > qubit2 and qubit 2 > qubit1
+        //qubitIndex1 = (qubitNum-1) - qubitIndex1;
+        //qubitIndex2 = (qubitNum-1) - qubitIndex2;
 
         //A 2x2 identity matrix
         Matrix eye = new Matrix(2,2);
@@ -60,13 +67,11 @@ public class ExplicitQuantumRegister extends AbstractQuantumRegister {
 
         int tempdimension = (int) Math.pow(2,qubitIndex1-qubitIndex2+1);
         Matrix tempmatrix = new Matrix(tempdimension,tempdimension);
-        System.out.println(tempdimension);
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
                 for(int k=0;k<Math.pow(2,qubitIndex1-qubitIndex2-1);k++){
                     int row= ((i>>1)<<(qubitIndex1-qubitIndex2)) + (k<<1) + i%2;
                     int col= ((j>>1)<<(qubitIndex1-qubitIndex2)) + (k<<1) + j%2;
-                    //System.out.printf("%d, %d\n", row, col);
                     tempmatrix.setElement(row,col, gate.getGateMatrix().getElement(i,j));
                 }
             }
