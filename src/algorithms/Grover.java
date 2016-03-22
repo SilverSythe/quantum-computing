@@ -4,6 +4,9 @@ import mathStructs.Matrix;
 import mathStructs.MatrixException;
 import register.AbstractQuantumRegister;
 
+/**
+ * A class representing an implementation of Grover's algorithm.
+ */
 public class Grover {
     private int answer;
     private int listSize;
@@ -15,6 +18,12 @@ public class Grover {
         this.listSize = listSize;
     }
 
+    /**
+     * Applies Grover's algorithm on a quantum register.
+     * @param quantumRegister the register the algorithm acts on
+     * @param iterations the number of grover steps to run
+     * @throws MatrixException on an illegal matrix operation
+     */
     public void apply(AbstractQuantumRegister quantumRegister, int iterations) throws MatrixException {
         if(quantumRegister.getNumberOfStates() < listSize){
             System.out.printf("Quantum register is too small, needs at least %d states.", listSize);
@@ -32,8 +41,6 @@ public class Grover {
         registerTranspose.transpose();
         diffusion = Matrix.mult(quantumRegister.getRegister(), registerTranspose);
 
-        //diffusion = Matrix.selfOuterProduct(quantumRegister.getRegister());
-
         diffusion = Matrix.mult(2.0, diffusion);
         Matrix eye = new Matrix(quantumRegister.getNumberOfStates(), quantumRegister.getNumberOfStates());
         eye.setIdentity();
@@ -44,10 +51,11 @@ public class Grover {
             quantumRegister.apply(oracle);
             quantumRegister.apply(diffusion);
 
-            System.out.printf("n=%d: P=%f\n", i+1, quantumRegister.getProbabilityAmplitude(answer).normSquared());
+            System.out.printf("On iteration n=%d  --  Probability of right answer is P=%f\n", i+1, quantumRegister.getProbabilityAmplitude(answer).normSquared());
         }
     }
 
+    @Deprecated
     public void singleIteration(AbstractQuantumRegister quantumRegister) throws MatrixException{
         if(quantumRegister.getNumberOfStates() < listSize){
             System.out.printf("Quantum register is too small, needs at least %d states.\n", listSize);

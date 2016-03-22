@@ -3,6 +3,9 @@ import mathStructs.MatrixException;
 import register.AbstractQuantumRegister;
 import register.SmartQuantumRegister;
 
+/**
+ * This class serves as a place to test various algorithms and functionality
+ */
 public class Main {
 
     public static void main(String[] args) throws MatrixException {

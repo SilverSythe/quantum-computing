@@ -6,6 +6,9 @@ import register.AbstractQuantumRegister;
 
 import java.util.Random;
 
+/**
+ * Implements Shor's algorithm through a combination of classical and quantum algorithms.
+ */
 public class Shor {
     int N;
     int iterations_;
@@ -15,6 +18,14 @@ public class Shor {
         iterations_ = 0;
     }
 
+    /**
+     * Applies Shor's algorithm, using an input and output register.
+     * @param inputRegister the input register
+     * @param outputRegister the output register
+     * @param printStatus whether to print progress and inner calculations
+     * @return
+     * @throws MatrixException
+     */
     public int[] apply(AbstractQuantumRegister inputRegister, AbstractQuantumRegister outputRegister, boolean printStatus) throws MatrixException{
         int q = 0;
 
@@ -91,6 +102,10 @@ public class Shor {
             //Perform QFT on input register
             if(printStatus) System.out.printf("Applying QFT to first register...\n");
             QFT.applyQFT(inputRegister);
+
+            for(int j=0;j<inputRegister.getNumberOfStates()/128;j++){
+                System.out.println(inputRegister.getProbabilityAmplitude(j).normSquared());
+            }
 
             //Measuring the input register will collapse the state onto a specific value
             int m = inputRegister.measure();

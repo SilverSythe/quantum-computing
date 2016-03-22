@@ -8,7 +8,7 @@ import mathStructs.MatrixException;
 import register.AbstractQuantumRegister;
 
 /**
- * Static methods to apply the quantum fourier transform (and inverse) to a quantum register.
+ * Static methods to apply the quantum Fourier transform to a quantum register.
  */
 public class QFT {
     @Deprecated
@@ -31,6 +31,11 @@ public class QFT {
         register.apply(QFTMatrix);
     }
 
+    /**
+     * Applies the quantum Fourier transform on a register, by applying a network of gates.
+     * @param register the register to act on
+     * @throws MatrixException on illegal matrix operation
+     */
     public static void applyQFT(AbstractQuantumRegister register) throws MatrixException {
         for(int i=0;i<register.getQubitNumber();i++){
             for(int j=0;j<i;j++){

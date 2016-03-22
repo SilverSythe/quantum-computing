@@ -3,6 +3,9 @@ import mathStructs.MatrixException;
 import register.AbstractQuantumRegister;
 import register.SmartQuantumRegister;
 
+/**
+ * This class tests Shor's algorithm.
+ */
 public class ShorTest {
     public static void main(String[] args) throws MatrixException{
         Shor shor = new Shor(55);
@@ -13,10 +16,6 @@ public class ShorTest {
         int[] factors = shor.apply(input, output, true);
 
         System.out.printf("Prime factors: %d --> %d, %d\n", factors[0] * factors[1], factors[0], factors[1]);
-
-        //Try brute force method
-        //ClassicalPrime primeBruteForce = new ClassicalPrime(55);
-
 
     }
 }
