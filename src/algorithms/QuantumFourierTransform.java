@@ -10,7 +10,7 @@ import register.AbstractQuantumRegister;
 /**
  * Static methods to apply the quantum Fourier transform to a quantum register.
  */
-public class QFT {
+public class QuantumFourierTransform {
     @Deprecated
     public static void apply(AbstractQuantumRegister register) throws MatrixException{
         int N = register.getNumberOfStates();

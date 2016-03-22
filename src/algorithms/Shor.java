@@ -99,9 +99,9 @@ public class Shor {
             inputRegister.renormalise();
 
             //Calculate the smallest period r of f(x) = a^x expMod N
-            //Perform QFT on input register
-            if(printStatus) System.out.printf("Applying QFT to first register...\n");
-            QFT.applyQFT(inputRegister);
+            //Perform QuantumFourierTransform on input register
+            if(printStatus) System.out.printf("Applying QuantumFourierTransform to first register...\n");
+            QuantumFourierTransform.applyQFT(inputRegister);
 
             for(int j=0;j<inputRegister.getNumberOfStates()/128;j++){
                 System.out.println(inputRegister.getProbabilityAmplitude(j).normSquared());
