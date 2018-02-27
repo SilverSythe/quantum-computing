@@ -1,7 +1,6 @@
 package register;
 
 import gates.SingleQubitGate;
-import gates.TwoQubitGate;
 import mathStructs.Complex;
 import mathStructs.Matrix;
 import mathStructs.MatrixException;
@@ -228,6 +227,4 @@ public abstract class AbstractQuantumRegister {
     }
 
     public abstract void apply(SingleQubitGate gate, int qubitIndex) throws MatrixException;
-
-    public abstract void apply(TwoQubitGate gate, int qubitIndex1, int qubitIndex2) throws MatrixException;
 }

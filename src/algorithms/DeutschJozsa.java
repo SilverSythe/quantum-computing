@@ -14,7 +14,6 @@ public class DeutschJozsa {
 
     public void oracle(){
         double p=Math.random();
-        System.out.println(p);
 
         if(p>0.5){  //balanced oracle
             for(int i=0;i<register.getNumberOfStates();i++){
@@ -26,7 +25,7 @@ public class DeutschJozsa {
             }
         }
         else{    //constant oracle  ,here we assume the function will always gives f(x)=1
-
+            
         }
     }
 
